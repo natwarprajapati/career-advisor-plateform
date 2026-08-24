@@ -78,7 +78,7 @@ const HeroSection = () => {
 
             {/* Subheading */}
             <p className="text-lg md:text-xl text-muted-foreground max-w-xl mx-auto lg:mx-0 mb-8">
-              Your personal AI mentor guiding you from resume creation to job success. 
+              Your personal AI mentor guiding you from resume creation to job success.
               Get ATS-optimized resumes, skill gap analysis, and personalized career paths.
             </p>
 
@@ -94,7 +94,7 @@ const HeroSection = () => {
                   <ArrowRight className="w-4 h-4" />
                 </Link>
               </motion.div>
-              
+
               <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
                 <button
                   onClick={handleGetStarted}
@@ -147,12 +147,12 @@ const HeroSection = () => {
                     <div>
                       <h3 className="text-xl font-semibold text-primary mb-2">Smart ATS Analysis</h3>
                       <p className="text-muted-foreground">
-                        AI-powered resume screening that evaluates your resume against ATS criteria 
+                        AI-powered resume screening that evaluates your resume against ATS criteria
                         and provides actionable improvement suggestions.
                       </p>
                     </div>
                   </div>
-                  
+
                   {/* Score Preview */}
                   <div className="mt-6 p-4 bg-muted/50 rounded-xl">
                     <div className="flex items-center justify-between mb-2">

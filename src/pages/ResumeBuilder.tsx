@@ -1,18 +1,14 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { motion } from 'framer-motion';
 import { ArrowLeft, Wand2, Download, Edit3, Loader2, Plus, Trash2, Eye, EyeOff, Save } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Card } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
+import { Button, Card, Input, Textarea, Tabs, TabsContent, TabsList, TabsTrigger } from '@/ui';
 import { Label } from '@/components/ui/label';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import type { Json } from '@/integrations/supabase/types';
-import { Link } from 'react-router-dom';
-import DashboardNavbar from '@/components/DashboardNavbar';
+import { Link, useSearchParams } from 'react-router-dom';
+import DashboardNavbar from '@/components/dashboard/DashboardNavbar';
 import { useUser } from '@/contexts/UserContext';
 import { aiService } from '@/services/ai';
 import { exportElementToPDF } from '@/services/pdf/pdfGenerator.service';
@@ -70,6 +66,8 @@ const emptyResume: ResumeData = {
 };
 
 const ResumeBuilder = () => {
+  const [searchParams] = useSearchParams();
+  const resumeId = searchParams.get('id');
   const [resumeData, setResumeData] = useState<ResumeData>(emptyResume);
   const [activeTab, setActiveTab] = useState('personal');
   const [isGenerating, setIsGenerating] = useState<string | null>(null);
@@ -78,6 +76,52 @@ const ResumeBuilder = () => {
   const [aiPrompt, setAiPrompt] = useState('');
   const { toast } = useToast();
   const { userProfile } = useUser();
+
+  // Load existing resume from Supabase / localStorage if resumeId is present
+  useEffect(() => {
+    if (!resumeId || !userProfile) return;
+    const fetchExistingResume = async () => {
+      try {
+        const { data, error } = await supabase
+          .from('resumes')
+          .select('*')
+          .eq('id', resumeId)
+          .eq('user_profile_id', userProfile.id)
+          .single();
+
+        if (error) throw error;
+
+        if (data && data.content) {
+          setResumeData(data.content as unknown as ResumeData);
+          toast({
+            title: 'Resume Loaded',
+            description: `Editing "${data.title || 'Saved Resume'}"`,
+          });
+        }
+      } catch {
+        // Silent fallback
+      }
+    };
+    fetchExistingResume();
+  }, [resumeId, userProfile, toast]);
+
+  // Pre-fill profile info if starting a fresh resume and user has completed their profile
+  useEffect(() => {
+    if (!resumeId && userProfile && !resumeData.personalInfo.fullName) {
+      setResumeData((prev) => ({
+        ...prev,
+        personalInfo: {
+          ...prev.personalInfo,
+          fullName: userProfile.name !== 'Candidate' ? userProfile.name || '' : '',
+          email: userProfile.email || '',
+          phone: userProfile.phone || '',
+          location: userProfile.location || '',
+          linkedin: userProfile.linkedin_url || '',
+        },
+        skills: userProfile.skills && userProfile.skills.length > 0 ? userProfile.skills.join(', ') : prev.skills,
+      }));
+    }
+  }, [userProfile, resumeId, resumeData.personalInfo.fullName]);
 
   const generateSection = async (section: string, userInput: string, existingContent?: string) => {
     if (!userInput.trim()) {
@@ -107,8 +151,7 @@ const ResumeBuilder = () => {
           description: 'AI has generated content for your resume section.',
         });
       }
-    } catch (error) {
-      console.error('Generation error:', error);
+    } catch {
       toast({
         title: 'Generation failed',
         description: 'Failed to generate content. Please try again.',
@@ -123,8 +166,8 @@ const ResumeBuilder = () => {
   const saveResume = async () => {
     if (!userProfile) {
       toast({
-        title: 'Profile required',
-        description: 'Please enter your name on the home page first.',
+        title: 'Sign In Required',
+        description: 'Please sign in or complete your candidate profile to save resumes to your dashboard.',
         variant: 'destructive',
       });
       return;
@@ -133,21 +176,37 @@ const ResumeBuilder = () => {
     const title = resumeData.personalInfo.fullName ? `${resumeData.personalInfo.fullName}'s Resume` : 'Created Resume';
     setIsSaving(true);
     try {
-      const { error } = await supabase.from('resumes').insert({
-        user_profile_id: userProfile.id,
-        title: title,
-        type: 'created',
-        content: resumeData as unknown as Json,
-      });
+      if (resumeId) {
+        const { error } = await supabase
+          .from('resumes')
+          .update({
+            title: title,
+            content: resumeData as unknown as Json,
+            updated_at: new Date().toISOString(),
+          })
+          .eq('id', resumeId)
+          .eq('user_profile_id', userProfile.id);
 
-      if (error) throw error;
+        if (error) throw error;
+        toast({
+          title: 'Resume updated!',
+          description: 'Your changes have been saved to your dashboard.',
+        });
+      } else {
+        const { error } = await supabase.from('resumes').insert({
+          user_profile_id: userProfile.id,
+          title: title,
+          type: 'created',
+          content: resumeData as unknown as Json,
+        });
 
-      toast({
-        title: 'Resume saved!',
-        description: 'Your resume has been saved to your dashboard.',
-      });
-    } catch (error) {
-      console.error('Save error:', error);
+        if (error) throw error;
+        toast({
+          title: 'Resume saved!',
+          description: 'Your resume has been saved to your dashboard.',
+        });
+      }
+    } catch {
       toast({
         title: 'Save failed',
         description: 'Failed to save resume to dashboard.',

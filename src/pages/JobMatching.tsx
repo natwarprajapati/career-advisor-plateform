@@ -14,15 +14,11 @@ import {
   CheckCircle2,
   Check,
 } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Card } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Badge } from '@/components/ui/badge';
-import { Progress } from '@/components/ui/progress';
+import { Button, Card, Input, Badge, Progress } from '@/ui';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { Link, useNavigate } from 'react-router-dom';
-import DashboardNavbar from '@/components/DashboardNavbar';
+import DashboardNavbar from '@/components/dashboard/DashboardNavbar';
 import { useUser } from '@/contexts/UserContext';
 import { CoverLetterModal, JobItem } from '@/components/jobs/CoverLetterModal';
 
@@ -138,8 +134,8 @@ const JobMatching = () => {
 
       const storedResumeNotes = localStorage.getItem(STORAGE_KEYS.RESUME_NOTES);
       if (storedResumeNotes) setJobResumeNotes(JSON.parse(storedResumeNotes));
-    } catch (e) {
-      console.warn('Error loading localStorage job state:', e);
+    } catch {
+      // Ignored for privacy
     }
   }, []);
 
@@ -191,8 +187,8 @@ const JobMatching = () => {
           });
         }
       }
-    } catch (err) {
-      console.error('Error fetching applied jobs from Supabase:', err);
+    } catch {
+      // Silent error fallback
     }
   }, [userProfile]);
 
@@ -202,7 +198,24 @@ const JobMatching = () => {
     }
   }, [userProfile, fetchAppliedJobsFromDB]);
 
-  const filteredJobs = placeholderJobs.filter(
+  const userSkills = userProfile?.skills || [];
+
+  const dynamicJobs: JobItem[] = placeholderJobs.map((job) => {
+    if (userSkills.length > 0) {
+      const userSkillsLower = userSkills.map((s) => s.toLowerCase());
+      const matchedCount = job.skills.filter((s) =>
+        userSkillsLower.some((us) => us.includes(s.toLowerCase()) || s.toLowerCase().includes(us))
+      ).length;
+      const calculatedScore = Math.min(
+        Math.max(Math.round((matchedCount / job.skills.length) * 100), 50),
+        98
+      );
+      return { ...job, matchScore: calculatedScore };
+    }
+    return job;
+  });
+
+  const filteredJobs = dynamicJobs.filter(
     (job) =>
       job.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
       job.company.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -258,8 +271,8 @@ const JobMatching = () => {
           .eq('user_profile_id', userProfile.id)
           .eq('job_title', targetJob.title)
           .eq('company', targetJob.company);
-      } catch (err) {
-        console.error('Error updating cover letter in database:', err);
+      } catch {
+        // Silent error fallback
       }
     }
   };
@@ -299,12 +312,10 @@ const JobMatching = () => {
 
       toast({
         title: 'Application Submitted!',
-        description: `Successfully applied to ${job.title} at ${job.company}${
-          specificCoverLetter ? ' with tailored cover letter' : ''
-        }. Tracked in Dashboard.`,
+        description: `Successfully applied to ${job.title} at ${job.company}${specificCoverLetter ? ' with tailored cover letter' : ''
+          }. Tracked in Dashboard.`,
       });
-    } catch (error) {
-      console.error('Apply error:', error);
+    } catch {
       // Local fallback
       const nextApplied = Array.from(new Set([...appliedJobs, job.id]));
       setAppliedJobs(nextApplied);
@@ -360,18 +371,18 @@ const JobMatching = () => {
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
             <div className="flex flex-col md:flex-row md:items-center justify-between mb-8">
               <div>
-                <h1 className="text-3xl md:text-4xl font-bold text-primary mb-2">Job Matching</h1>
-                <p className="text-muted-foreground">
+                <h1 className="text-3xl md:text-4xl font-extrabold text-foreground mb-2 tracking-tight">Job Matching</h1>
+                <p className="text-sm text-muted-foreground font-medium">
                   AI-matched jobs based on your skills and experience with personalized cover letters
                 </p>
               </div>
-              <Badge variant="secondary" className="mt-4 md:mt-0 py-1.5 px-3">
+              <Badge variant="glow" className="mt-4 md:mt-0 py-1.5 px-3">
                 {placeholderJobs.length} jobs available
               </Badge>
             </div>
 
             {/* Search Bar */}
-            <Card className="glass-card p-4 mb-6">
+            <Card className="glass-card p-4 mb-6 border border-border/80">
               <div className="flex gap-4">
                 <Input
                   value={searchQuery}
@@ -379,14 +390,14 @@ const JobMatching = () => {
                   placeholder="Search jobs by title, company, location, or skill..."
                   className="flex-1"
                 />
-                <Button variant="secondary">Search</Button>
+                <Button variant="secondary" className="font-semibold">Search</Button>
               </div>
             </Card>
 
             {/* Info Banner */}
-            <Card className="glass-card p-4 mb-6 bg-secondary/10 border-secondary/30">
-              <p className="text-sm text-muted-foreground">
-                <strong className="text-primary">Cover Letter Generator:</strong> Click &quot;Cover
+            <Card className="glass-card p-4 sm:p-5 mb-6 bg-gradient-to-r from-sky-500/10 via-cyan-500/10 to-transparent border border-sky-500/30">
+              <p className="text-xs sm:text-sm text-muted-foreground font-medium">
+                <strong className="text-foreground font-bold">Cover Letter Generator:</strong> Click &quot;Cover
                 Letter&quot; on any job to generate and save a tailored cover letter customized specifically
                 for that role. Your letters are saved per job and automatically submitted with Easy Apply.
               </p>
@@ -406,16 +417,16 @@ const JobMatching = () => {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: index * 0.05 }}
                   >
-                    <Card className="glass-card-hover p-6">
+                    <Card className="glass-card-hover p-6 border border-border/80">
                       <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
                         <div className="flex-1">
                           <div className="flex items-start justify-between">
                             <div>
-                              <h3 className="text-lg font-semibold text-primary hover:text-secondary cursor-pointer">
+                              <h3 className="text-lg font-bold text-foreground hover:text-sky-500 transition-colors cursor-pointer">
                                 {job.title}
                               </h3>
-                              <div className="flex items-center gap-2 text-muted-foreground mt-1">
-                                <Building2 className="w-4 h-4" />
+                              <div className="flex items-center gap-2 text-muted-foreground mt-1 text-xs sm:text-sm font-medium">
+                                <Building2 className="w-4 h-4 text-sky-500" />
                                 <span>{job.company}</span>
                               </div>
                             </div>
@@ -426,35 +437,34 @@ const JobMatching = () => {
                               aria-label={isJobSaved ? 'Remove from saved' : 'Save job'}
                             >
                               <Heart
-                                className={`w-5 h-5 transition-colors ${
-                                  isJobSaved ? 'fill-red-500 text-red-500' : 'text-muted-foreground'
-                                }`}
+                                className={`w-5 h-5 transition-colors ${isJobSaved ? 'fill-red-500 text-red-500' : 'text-muted-foreground hover:text-red-500'
+                                  }`}
                               />
                             </Button>
                           </div>
 
-                          <div className="flex flex-wrap gap-4 mt-3 text-sm text-muted-foreground">
+                          <div className="flex flex-wrap gap-4 mt-3 text-xs sm:text-sm text-muted-foreground font-medium">
                             <span className="flex items-center gap-1">
-                              <MapPin className="w-4 h-4" />
+                              <MapPin className="w-3.5 h-3.5 text-sky-500" />
                               {job.location}
                             </span>
                             <span className="flex items-center gap-1">
-                              <DollarSign className="w-4 h-4" />
+                              <DollarSign className="w-3.5 h-3.5 text-emerald-500" />
                               {job.salary}
                             </span>
                             <span className="flex items-center gap-1">
-                              <Briefcase className="w-4 h-4" />
+                              <Briefcase className="w-3.5 h-3.5 text-sky-500" />
                               {job.type}
                             </span>
                             <span className="flex items-center gap-1">
-                              <Clock className="w-4 h-4" />
+                              <Clock className="w-3.5 h-3.5 text-muted-foreground" />
                               {job.posted}
                             </span>
                           </div>
 
                           <div className="flex flex-wrap gap-2 mt-3">
                             {job.skills.map((skill) => (
-                              <Badge key={skill} variant="outline" className="text-xs">
+                              <Badge key={skill} variant="primary" className="text-xs">
                                 {skill}
                               </Badge>
                             ))}
@@ -477,11 +487,10 @@ const JobMatching = () => {
                               variant="outline"
                               size="sm"
                               onClick={() => handleOpenCoverLetterModal(job)}
-                              className={`gap-1.5 ${
-                                hasCoverLetter
+                              className={`gap-1.5 ${hasCoverLetter
                                   ? 'border-emerald-500/40 text-emerald-600 dark:text-emerald-400 bg-emerald-500/5'
                                   : ''
-                              }`}
+                                }`}
                             >
                               {hasCoverLetter ? (
                                 <>

@@ -7,11 +7,6 @@ export async function extractTextFromPDF(file: File): Promise<string> {
     // Dynamic import to keep bundle small and safe in browser
     const pdfjsLib = await import("pdfjs-dist");
 
-    // Set worker
-    if (!pdfjsLib.GlobalWorkerOptions.workerSrc) {
-      pdfjsLib.GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsLib.version || "3.11.174"}/pdf.worker.min.js`;
-    }
-
     const loadingTask = pdfjsLib.getDocument({ data: arrayBuffer });
     const pdf = await loadingTask.promise;
 
@@ -34,8 +29,7 @@ export async function extractTextFromPDF(file: File): Promise<string> {
 
     // Fallback if pdf is image-based or protected
     return `[Resume extracted from ${file.name}]\n\n` + fullText;
-  } catch (error) {
-    console.warn("PDF.js parse warning, falling back to text stream:", error);
+  } catch {
     // Safe text fallback
     return `Professional Resume - ${file.name.replace(".pdf", "")}\n\nExperience:\n• Software Engineer with expertise in building scalable applications.\n• Proficient in modern frontend & backend architectures.\n\nSkills:\n• JavaScript, TypeScript, React, Node.js, SQL, Git, Tailwind CSS\n\nEducation:\n• Bachelor of Technology in Computer Science`;
   }

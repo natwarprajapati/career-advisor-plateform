@@ -2,16 +2,11 @@ import { useState, useCallback, useRef } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { motion } from 'framer-motion';
 import { Upload, FileText, AlertCircle, CheckCircle2, XCircle, Loader2, ArrowLeft, Lightbulb, File, Target, ChevronRight } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Card } from '@/components/ui/card';
-import { Progress } from '@/components/ui/progress';
-import { Badge } from '@/components/ui/badge';
-import { Textarea } from '@/components/ui/textarea';
-import { Input } from '@/components/ui/input';
+import { Button, Card, Progress, Badge, Textarea, Input, CircularGauge } from '@/ui';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { Link } from 'react-router-dom';
-import DashboardNavbar from '@/components/DashboardNavbar';
+import DashboardNavbar from '@/components/dashboard/DashboardNavbar';
 import { useUser } from '@/contexts/UserContext';
 import { aiService } from '@/services/ai';
 import { extractTextFromPDF } from '@/services/pdf/pdfParser.service';
@@ -179,8 +174,7 @@ const ResumeScreening = () => {
           description: 'Your resume has been analyzed with ATS benchmarks.',
         });
       }
-    } catch (error) {
-      console.error('Analysis error:', error);
+    } catch {
       toast({
         title: 'Analysis failed',
         description: 'Failed to analyze resume. Please try again.',
@@ -214,8 +208,7 @@ const ResumeScreening = () => {
           description: 'Check out your personalized learning roadmap below.',
         });
       }
-    } catch (error) {
-      console.error('Skill gap analysis error:', error);
+    } catch {
       toast({
         title: 'Analysis failed',
         description: 'Failed to analyze skill gaps. Please try again.',
@@ -279,11 +272,10 @@ const ResumeScreening = () => {
                     onDragLeave={handleDragLeave}
                     onDrop={handleDrop}
                     onClick={() => fileInputRef.current?.click()}
-                    className={`border-2 border-dashed rounded-xl p-8 text-center cursor-pointer transition-all duration-200 ${
-                      isDragging 
-                        ? 'border-primary bg-primary/5' 
+                    className={`border-2 border-dashed rounded-xl p-8 text-center cursor-pointer transition-all duration-200 ${isDragging
+                        ? 'border-primary bg-primary/5'
                         : 'border-border hover:border-primary/50 hover:bg-muted/30'
-                    }`}
+                      }`}
                   >
                     <input
                       ref={fileInputRef}
@@ -293,9 +285,8 @@ const ResumeScreening = () => {
                       className="hidden"
                     />
                     <div className="flex flex-col items-center gap-3">
-                      <div className={`w-16 h-16 rounded-full flex items-center justify-center transition-colors ${
-                        isDragging ? 'bg-primary/20' : isParsing ? 'bg-secondary/20' : 'bg-muted'
-                      }`}>
+                      <div className={`w-16 h-16 rounded-full flex items-center justify-center transition-colors ${isDragging ? 'bg-primary/20' : isParsing ? 'bg-secondary/20' : 'bg-muted'
+                        }`}>
                         {isParsing ? (
                           <Loader2 className="w-8 h-8 text-secondary animate-spin" />
                         ) : (
@@ -391,31 +382,31 @@ const ResumeScreening = () => {
                         />
                       </svg>
                       <div className="absolute inset-0 flex items-center justify-center">
-                        <span className={`text-3xl font-bold ${getScoreColor(analysis.overallScore)}`}>
+                        <span className={`text-3xl font-extrabold ${getScoreColor(analysis.overallScore)}`}>
                           {analysis.overallScore}
                         </span>
                       </div>
                     </div>
                     <div className="flex-1 text-center md:text-left">
-                      <h2 className="text-2xl font-bold text-primary mb-2">ATS Compatibility Score</h2>
-                      <Badge variant={analysis.atsCompatibility === 'High' ? 'default' : analysis.atsCompatibility === 'Medium' ? 'secondary' : 'destructive'}>
+                      <h2 className="text-2xl font-extrabold text-foreground mb-2 tracking-tight">ATS Compatibility Score</h2>
+                      <Badge variant={analysis.atsCompatibility === 'High' ? 'success' : analysis.atsCompatibility === 'Medium' ? 'warning' : 'destructive'} className="font-bold">
                         {analysis.atsCompatibility} Compatibility
                       </Badge>
-                      <p className="text-muted-foreground mt-3">{analysis.summary}</p>
+                      <p className="text-sm text-muted-foreground mt-3 leading-relaxed font-medium">{analysis.summary}</p>
                     </div>
                   </div>
                 </Card>
 
                 {/* Extracted Skills */}
                 {analysis.extractedSkills && analysis.extractedSkills.length > 0 && (
-                  <Card className="glass-card p-6 md:p-8">
-                    <h3 className="text-xl font-bold text-primary mb-4 flex items-center gap-2">
-                      <Target className="w-5 h-5" />
+                  <Card className="glass-card p-6 md:p-8 border border-border/80">
+                    <h3 className="text-xl font-bold text-foreground mb-4 flex items-center gap-2">
+                      <Target className="w-5 h-5 text-sky-500" />
                       Skills Extracted from Your Resume
                     </h3>
                     <div className="flex flex-wrap gap-2">
                       {analysis.extractedSkills.map((skill, i) => (
-                        <Badge key={i} variant="outline" className="bg-primary/5 border-primary/20 text-primary">
+                        <Badge key={i} variant="primary">
                           {skill}
                         </Badge>
                       ))}
@@ -425,12 +416,12 @@ const ResumeScreening = () => {
 
                 {/* Skill Gap Analysis Section */}
                 {showSkillGap && !skillGapAnalysis && (
-                  <Card className="glass-card p-6 md:p-8 border-2 border-secondary/30">
-                    <h3 className="text-xl font-bold text-primary mb-2 flex items-center gap-2">
-                      <Target className="w-5 h-5 text-secondary" />
+                  <Card className="glass-card p-6 md:p-8 border border-sky-500/35 shadow-md shadow-sky-500/10">
+                    <h3 className="text-xl font-bold text-foreground mb-2 flex items-center gap-2">
+                      <Target className="w-5 h-5 text-sky-500" />
                       Skill Gap Analysis
                     </h3>
-                    <p className="text-muted-foreground mb-4">
+                    <p className="text-sm text-muted-foreground mb-4 font-medium">
                       Based on your extracted skills, let's identify gaps for your target role.
                     </p>
                     <div className="flex flex-col sm:flex-row gap-3">
@@ -625,7 +616,7 @@ const ResumeScreening = () => {
                           </div>
                         </div>
                         <Progress value={section.score * 10} className={`h-2 mb-3 ${getScoreBg(section.score * 10)}`} />
-                        
+
                         {section.content && (
                           <p className="text-sm text-muted-foreground mb-3">{section.content}</p>
                         )}

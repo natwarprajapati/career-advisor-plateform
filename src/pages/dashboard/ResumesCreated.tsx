@@ -6,7 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import { useUser } from '@/contexts/UserContext';
 import { supabase } from '@/integrations/supabase/client';
 import DashboardLayout from '@/components/dashboard/DashboardLayout';
-import { Button, Card, EmptyState, Spinner } from '@/design-system';
+import { Button, Card, EmptyState, Spinner } from '@/ui';
 import { useToast } from '@/hooks/use-toast';
 
 interface Resume {
@@ -42,8 +42,8 @@ const ResumesCreated = () => {
 
       if (error) throw error;
       setResumes(data || []);
-    } catch (error) {
-      console.error('Error fetching resumes:', error);
+    } catch {
+      // Silent error fallback
     } finally {
       setLoading(false);
     }

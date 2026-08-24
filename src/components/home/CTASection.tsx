@@ -25,10 +25,10 @@ const CTASection = () => {
             initial={{ opacity: 0, scale: 0.9 }}
             animate={isInView ? { opacity: 1, scale: 1 } : {}}
             transition={{ delay: 0.2, duration: 0.5 }}
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-secondary/10 border border-secondary/30 mb-6"
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-sky-500/10 border border-sky-500/30 mb-6 text-sky-700 dark:text-sky-300 font-semibold"
           >
-            <Sparkles className="w-4 h-4 text-secondary" />
-            <span className="text-sm font-medium text-primary">Ready to Transform Your Career?</span>
+            <Sparkles className="w-4 h-4 text-sky-500" />
+            <span className="text-sm">Ready to Transform Your Career?</span>
           </motion.div>
 
           {/* Heading */}
@@ -36,7 +36,7 @@ const CTASection = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={isInView ? { opacity: 1, y: 0 } : {}}
             transition={{ delay: 0.3, duration: 0.6 }}
-            className="text-3xl md:text-4xl lg:text-5xl font-bold text-primary mb-4"
+            className="text-3xl md:text-4xl lg:text-5xl font-extrabold text-foreground mb-4 tracking-tight"
           >
             Build Your Career with AI,
             <br />
@@ -48,7 +48,7 @@ const CTASection = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={isInView ? { opacity: 1, y: 0 } : {}}
             transition={{ delay: 0.4, duration: 0.6 }}
-            className="text-lg text-muted-foreground max-w-2xl mx-auto mb-8"
+            className="text-base md:text-lg text-muted-foreground max-w-2xl mx-auto mb-8 font-medium leading-relaxed"
           >
             Join thousands of job seekers who have transformed their career prospects with AI-powered 
             resume optimization, skill gap analysis, and intelligent job matching.

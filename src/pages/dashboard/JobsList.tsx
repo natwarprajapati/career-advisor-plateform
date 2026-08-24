@@ -17,9 +17,9 @@ import {
   ModalHeader,
   ModalTitle,
   ModalFooter,
-  ModalClose
-} from '@/design-system';
-import { Textarea } from '@/components/ui/textarea';
+  ModalClose,
+  Textarea
+} from '@/ui';
 import { useToast } from '@/hooks/use-toast';
 
 interface Job {
@@ -61,8 +61,8 @@ const JobsList = () => {
 
       if (error) throw error;
       setJobs(data || []);
-    } catch (error) {
-      console.error('Error fetching jobs:', error);
+    } catch {
+      // Silent error fallback
     } finally {
       setLoading(false);
     }
@@ -111,8 +111,7 @@ const JobsList = () => {
         title: 'Cover letter updated',
         description: 'Changes have been saved successfully.',
       });
-    } catch (error) {
-      console.error('Error updating cover letter:', error);
+    } catch {
       toast({
         title: 'Update failed',
         description: 'Failed to update cover letter.',
@@ -137,8 +136,7 @@ const JobsList = () => {
       if (error) throw error;
       setJobs((prev) => prev.filter((j) => j.id !== id));
       toast({ title: 'Job removed successfully' });
-    } catch (error) {
-      console.error('Delete job error:', error);
+    } catch {
       toast({ title: 'Failed to remove job', variant: 'destructive' });
     }
   };

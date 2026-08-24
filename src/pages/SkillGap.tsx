@@ -1,19 +1,14 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { motion } from 'framer-motion';
-import { ArrowLeft, Target, Loader2, Plus, TrendingUp, Clock, BookOpen, CheckCircle2 } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Card } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Badge } from '@/components/ui/badge';
-import { Progress } from '@/components/ui/progress';
+import { ArrowLeft, Target, Loader2, Plus, TrendingUp, Clock, BookOpen, CheckCircle2, Sparkles } from 'lucide-react';
+import { Button, Card, Input, Badge, Progress, CircularGauge, LearnerProgressBadge } from '@/ui';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { Link } from 'react-router-dom';
-import DashboardNavbar from '@/components/DashboardNavbar';
+import DashboardNavbar from '@/components/dashboard/DashboardNavbar';
 import { useUser } from '@/contexts/UserContext';
 import { aiService } from '@/services/ai';
-import { CircularGauge, LearnerProgressBadge } from '@/design-system';
 
 interface SkillComparison {
   skill: string;
@@ -75,6 +70,7 @@ const SkillGap = () => {
   const { toast } = useToast();
   const { userProfile } = useUser();
 
+
   const addSkill = () => {
     if (skillInput.trim() && !skills.includes(skillInput.trim())) {
       setSkills([...skills, skillInput.trim()]);
@@ -116,8 +112,7 @@ const SkillGap = () => {
           description: 'Your skill gap analysis is ready.',
         });
       }
-    } catch (error) {
-      console.error('Analysis error:', error);
+    } catch {
       toast({
         title: 'Analysis failed',
         description: 'Failed to analyze skill gap. Please try again.',
@@ -183,38 +178,38 @@ const SkillGap = () => {
                       {skills.map((skill) => (
                         <Badge
                           key={skill}
-                          variant="secondary"
-                          className="cursor-pointer hover:bg-destructive/20"
+                          variant="primary"
+                          className="cursor-pointer hover:bg-rose-500/20 hover:border-rose-500/40 hover:text-rose-500 transition-colors"
                           onClick={() => removeSkill(skill)}
                         >
                           {skill} ×
                         </Badge>
                       ))}
                       {skills.length === 0 && (
-                        <span className="text-sm text-muted-foreground">No skills added yet</span>
+                        <span className="text-xs text-muted-foreground font-medium">No skills added yet</span>
                       )}
                     </div>
                   </div>
 
                   {/* Target Role */}
                   <div>
-                    <label className="block text-sm font-medium text-foreground mb-2">
+                    <label className="block text-sm font-semibold text-foreground mb-2">
                       Target Role
                     </label>
                     <Input
                       value={targetRole}
                       onChange={(e) => setTargetRole(e.target.value)}
-                      placeholder="Enter your target job role..."
+                      placeholder="Enter your target job role (e.g. Senior Frontend Engineer)..."
                     />
-                    <div className="flex flex-wrap gap-2 mt-3">
-                      <span className="text-sm text-muted-foreground">Popular:</span>
+                    <div className="flex flex-wrap items-center gap-2 mt-3">
+                      <span className="text-xs font-semibold text-muted-foreground">Popular:</span>
                       {popularRoles.map((role) => (
                         <Button
                           key={role}
                           variant="ghost"
                           size="sm"
                           onClick={() => setTargetRole(role)}
-                          className="text-xs h-7"
+                          className="text-xs h-7 rounded-lg bg-muted/60 hover:bg-sky-500/10 hover:text-sky-500 font-semibold"
                         >
                           {role}
                         </Button>

@@ -108,8 +108,7 @@ export const CoverLetterModal = ({
           description: `Customized for ${job.title} at ${job.company}. Click Save to keep changes.`,
         });
       }
-    } catch (error) {
-      console.error('Generation error:', error);
+    } catch {
       toast({
         title: 'Generation failed',
         description: 'Could not generate cover letter. Please try again.',
@@ -137,8 +136,7 @@ export const CoverLetterModal = ({
         title: 'Cover Letter Saved!',
         description: `Successfully saved cover letter for ${job.title}.`,
       });
-    } catch (error) {
-      console.error('Save error:', error);
+    } catch {
       toast({
         title: 'Save failed',
         description: 'Could not save cover letter.',

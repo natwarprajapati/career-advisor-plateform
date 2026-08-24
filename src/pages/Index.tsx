@@ -22,7 +22,7 @@ const Index = () => {
         <meta property="og:description" content="Transform your career with AI-powered resume optimization, skill gap analysis, and intelligent job matching." />
         <meta property="og:type" content="website" />
       </Helmet>
-      
+
       <main className="min-h-screen bg-background overflow-x-hidden">
         <LandingNavbar />
         <section id="hero">
