@@ -10,7 +10,7 @@ export const buttonVariants = cva(
         primary:
           "bg-primary from-sky-500 to-cyan-500 text-white shadow-md shadow-sky-500/20 hover:shadow-lg hover:shadow-cyan-500/30 hover:brightness-105",
         secondary:
-          "bg-muted text-foreground hover:bg-muted/80 border border-border/70",
+          "bg-sky-100/70 hover:bg-sky-200/80 dark:bg-sky-950/50 dark:hover:bg-sky-900/60 text-sky-950 dark:text-sky-100 border border-sky-300/80 dark:border-sky-700/80 shadow-xs hover:border-sky-400 hover:scale-[1.01]",
         glow:
           "bg-gradient-to-r from-sky-500 to-cyan-400 text-white shadow-md shadow-sky-500/25 hover:shadow-lg hover:shadow-cyan-500/40 hover:scale-[1.02] hover:brightness-110",
         glass:

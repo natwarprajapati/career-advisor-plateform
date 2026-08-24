@@ -16,6 +16,7 @@ export interface StatCardProps {
   className?: string;
   gradient?: "sky" | "cyan" | "emerald" | "amber" | "rose" | "purple";
   onClick?: () => void;
+  ariaLabel?: string;
 }
 
 export function StatCard({
@@ -27,6 +28,7 @@ export function StatCard({
   className,
   gradient = "sky",
   onClick,
+  ariaLabel,
 }: StatCardProps) {
   const gradientStyles = {
     sky: "from-sky-500/10 to-transparent border-sky-500/20 text-sky-500",
@@ -46,20 +48,34 @@ export function StatCard({
     purple: "bg-purple-500/15 text-purple-500 border-purple-500/30",
   };
 
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (onClick && (e.key === "Enter" || e.key === " ")) {
+      e.preventDefault();
+      onClick();
+    }
+  };
+
+  const computedAriaLabel = ariaLabel || `${title}: ${value}${subtitle ? `, ${subtitle}` : ""}`;
+
   return (
     <Card
       variant="glass"
       hover="lift"
+      role={onClick ? "button" : "region"}
+      tabIndex={onClick ? 0 : undefined}
+      aria-label={computedAriaLabel}
       onClick={onClick}
+      onKeyDown={handleKeyDown}
       className={cn(
-        "p-5 overflow-hidden transition-all duration-300 relative group",
-        onClick && "cursor-pointer",
+        "p-5 overflow-hidden transition-all duration-300 relative group select-none",
+        onClick && "cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-500 focus-visible:ring-offset-2 focus-visible:ring-offset-background",
         className
       )}
     >
       <div
+        aria-hidden="true"
         className={cn(
-          "absolute -right-6 -top-6 h-28 w-28 rounded-full bg-gradient-to-bl blur-2xl opacity-40 transition-opacity group-hover:opacity-70",
+          "absolute -right-6 -top-6 h-28 w-28 rounded-full bg-gradient-to-bl blur-2xl opacity-40 transition-opacity group-hover:opacity-70 pointer-events-none",
           gradientStyles[gradient]
         )}
       />
@@ -77,6 +93,7 @@ export function StatCard({
         </div>
         {icon && (
           <div
+            aria-hidden="true"
             className={cn(
               "flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border shadow-sm transition-transform duration-300 group-hover:scale-110",
               iconBgStyles[gradient]

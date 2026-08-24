@@ -1,6 +1,6 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Phone, ArrowRight, Sparkles, ShieldCheck, CheckCircle2 } from 'lucide-react';
+import { Phone, ArrowRight, Sparkles, ShieldCheck, CheckCircle2, X } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useUser } from '@/contexts/UserContext';
 import { useToast } from '@/hooks/use-toast';
@@ -97,6 +97,19 @@ const GetStartedModal = ({ isOpen, onClose }: GetStartedModalProps) => {
     }
   };
 
+  // Keyboard Accessibility: Close on Escape key
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && isOpen) {
+        onClose();
+      }
+    };
+    if (isOpen) {
+      window.addEventListener('keydown', handleKeyDown);
+      return () => window.removeEventListener('keydown', handleKeyDown);
+    }
+  }, [isOpen, onClose]);
+
   const isValidPhone = phone.length === 10 && /^[6-9]\d{9}$/.test(phone);
 
   return (
@@ -109,7 +122,7 @@ const GetStartedModal = ({ isOpen, onClose }: GetStartedModalProps) => {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={onClose}
-            className="fixed inset-0 bg-background/80 backdrop-blur-sm z-50"
+            className="fixed inset-0 bg-background/80 backdrop-blur-sm z-50 cursor-pointer"
           />
           
           {/* Modal */}
@@ -120,7 +133,22 @@ const GetStartedModal = ({ isOpen, onClose }: GetStartedModalProps) => {
             transition={{ type: 'spring', damping: 25, stiffness: 300 }}
             className="fixed inset-0 flex items-center justify-center z-50 p-4 pointer-events-none"
           >
-            <div className="glass-card p-6 sm:p-8 w-full max-w-md pointer-events-auto border border-border/80 shadow-2xl">
+            <div
+              role="dialog"
+              aria-modal="true"
+              aria-labelledby="get-started-modal-title"
+              className="relative glass-card p-6 sm:p-8 w-full max-w-md pointer-events-auto border border-border/80 shadow-2xl"
+            >
+              {/* Accessible Close Button */}
+              <button
+                type="button"
+                onClick={onClose}
+                aria-label="Close dialog"
+                className="absolute right-4 top-4 rounded-xl p-1.5 text-muted-foreground opacity-70 transition-opacity hover:opacity-100 hover:bg-muted focus:outline-none focus:ring-2 focus:ring-sky-400 cursor-pointer"
+              >
+                <X className="w-4 h-4" />
+              </button>
+
               {/* Header */}
               <div className="text-center mb-6">
                 <motion.div
@@ -131,7 +159,10 @@ const GetStartedModal = ({ isOpen, onClose }: GetStartedModalProps) => {
                 >
                   <Sparkles className="w-7 h-7" />
                 </motion.div>
-                <h2 className="text-xl sm:text-2xl font-extrabold text-foreground tracking-tight mb-1">
+                <h2
+                  id="get-started-modal-title"
+                  className="text-xl sm:text-2xl font-extrabold text-foreground tracking-tight mb-1"
+                >
                   Access Career Navigator
                 </h2>
                 <p className="text-xs sm:text-sm text-muted-foreground">

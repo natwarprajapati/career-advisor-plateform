@@ -9,6 +9,7 @@ import { supabase } from '@/integrations/supabase/client';
 import type { Json } from '@/integrations/supabase/types';
 import { Link, useSearchParams } from 'react-router-dom';
 import DashboardNavbar from '@/components/dashboard/DashboardNavbar';
+import { ResumeBuilderSkeleton } from '@/components/resume-builder';
 import { useUser } from '@/contexts/UserContext';
 import { aiService } from '@/services/ai';
 import { exportElementToPDF } from '@/services/pdf/pdfGenerator.service';
@@ -72,6 +73,7 @@ const ResumeBuilder = () => {
   const [activeTab, setActiveTab] = useState('personal');
   const [isGenerating, setIsGenerating] = useState<string | null>(null);
   const [isSaving, setIsSaving] = useState(false);
+  const [initialLoading, setInitialLoading] = useState(!!resumeId);
   const [showPreview, setShowPreview] = useState(true);
   const [aiPrompt, setAiPrompt] = useState('');
   const { toast } = useToast();
@@ -79,7 +81,12 @@ const ResumeBuilder = () => {
 
   // Load existing resume from Supabase / localStorage if resumeId is present
   useEffect(() => {
-    if (!resumeId || !userProfile) return;
+    if (!resumeId) {
+      setInitialLoading(false);
+      return;
+    }
+    if (!userProfile) return;
+
     const fetchExistingResume = async () => {
       try {
         const { data, error } = await supabase
@@ -100,6 +107,8 @@ const ResumeBuilder = () => {
         }
       } catch {
         // Silent fallback
+      } finally {
+        setInitialLoading(false);
       }
     };
     fetchExistingResume();
@@ -435,6 +444,10 @@ const ResumeBuilder = () => {
       printWindow.print();
     }
   };
+
+  if (initialLoading) {
+    return <ResumeBuilderSkeleton />;
+  }
 
   return (
     <>

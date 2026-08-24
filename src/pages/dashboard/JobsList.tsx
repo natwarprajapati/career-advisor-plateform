@@ -6,12 +6,12 @@ import { useNavigate } from 'react-router-dom';
 import { useUser } from '@/contexts/UserContext';
 import { supabase } from '@/integrations/supabase/client';
 import DashboardLayout from '@/components/dashboard/DashboardLayout';
+import { JobsListSkeleton } from '@/components/dashboard';
 import {
   Button,
   Card,
   Badge,
   EmptyState,
-  Spinner,
   Modal,
   ModalContent,
   ModalHeader,
@@ -157,11 +157,7 @@ const JobsList = () => {
   };
 
   if (isLoading || loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-background">
-        <Spinner size="lg" label="Loading Applied Jobs..." />
-      </div>
-    );
+    return <JobsListSkeleton />;
   }
 
   return (
@@ -268,8 +264,10 @@ const JobsList = () => {
             <div className="flex items-center justify-between text-xs text-muted-foreground">
               <span>Edit and save updates to your saved cover letter:</span>
               <button
+                type="button"
                 onClick={handleCopy}
-                className="inline-flex items-center gap-1 text-sky-500 hover:text-sky-400 font-semibold"
+                aria-label={isCopied ? "Cover letter copied" : "Copy cover letter text"}
+                className="inline-flex items-center gap-1 text-sky-500 hover:text-sky-400 font-semibold cursor-pointer"
               >
                 {isCopied ? <Check className="w-3.5 h-3.5 text-emerald-500" /> : <Copy className="w-3.5 h-3.5" />}
                 {isCopied ? 'Copied' : 'Copy Text'}

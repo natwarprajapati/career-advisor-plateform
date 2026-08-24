@@ -20,7 +20,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { Link, useNavigate } from 'react-router-dom';
 import DashboardNavbar from '@/components/dashboard/DashboardNavbar';
 import { useUser } from '@/contexts/UserContext';
-import { CoverLetterModal, JobItem } from '@/components/jobs/CoverLetterModal';
+import { CoverLetterModal, JobItem, JobMatchingSkeleton } from '@/components/jobs';
 
 // Available demo jobs dataset
 const placeholderJobs: JobItem[] = [
@@ -108,6 +108,7 @@ const JobMatching = () => {
   // Modal state
   const [selectedCoverLetterJob, setSelectedCoverLetterJob] = useState<JobItem | null>(null);
   const [isCoverLetterModalOpen, setIsCoverLetterModalOpen] = useState(false);
+  const [applyingJobId, setApplyingJobId] = useState<string | null>(null);
 
   const { toast } = useToast();
   const { userProfile, isLoading } = useUser();
@@ -279,6 +280,8 @@ const JobMatching = () => {
 
   // Apply to job (with this job's specific cover letter)
   const handleEasyApply = async (job: JobItem, coverLetterOverride?: string) => {
+    if (applyingJobId) return;
+
     if (!userProfile) {
       toast({
         title: 'Profile required',
@@ -293,6 +296,7 @@ const JobMatching = () => {
         ? coverLetterOverride
         : jobCoverLetters[job.id] || null;
 
+    setApplyingJobId(job.id);
     try {
       const { error } = await supabase.from('jobs').insert({
         user_profile_id: userProfile.id,
@@ -311,7 +315,7 @@ const JobMatching = () => {
       localStorage.setItem(STORAGE_KEYS.APPLIED_JOBS, JSON.stringify(nextApplied));
 
       toast({
-        title: 'Application Submitted!',
+        title: 'Application Submitted! 🎉',
         description: `Successfully applied to ${job.title} at ${job.company}${specificCoverLetter ? ' with tailored cover letter' : ''
           }. Tracked in Dashboard.`,
       });
@@ -325,6 +329,8 @@ const JobMatching = () => {
         title: 'Application saved locally',
         description: `Application to ${job.title} at ${job.company} recorded.`,
       });
+    } finally {
+      setApplyingJobId(null);
     }
   };
 
@@ -346,6 +352,10 @@ const JobMatching = () => {
   }
 
   if (!userProfile) return null;
+
+  if (isLoading) {
+    return <JobMatchingSkeleton />;
+  }
 
   return (
     <>
@@ -508,15 +518,18 @@ const JobMatching = () => {
                             {/* Easy Apply / Applied dynamic Button */}
                             <Button
                               size="sm"
-                              className="btn-primary gap-1.5"
+                              className="btn-primary gap-1.5 min-w-[100px]"
                               onClick={() => handleEasyApply(job)}
-                              disabled={isJobApplied}
+                              disabled={isJobApplied || applyingJobId === job.id}
+                              isLoading={applyingJobId === job.id}
                             >
                               {isJobApplied ? (
                                 <>
                                   <span>Applied</span>
                                   <CheckCircle2 className="w-4 h-4 text-emerald-400" />
                                 </>
+                              ) : applyingJobId === job.id ? (
+                                <span>Applying...</span>
                               ) : (
                                 <>
                                   <span>Easy Apply</span>

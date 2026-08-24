@@ -1,4 +1,3 @@
-// Single Source of Truth for Enterprise UI Primitives
 export * from "./Button";
 export * from "./Card";
 export * from "./Input";

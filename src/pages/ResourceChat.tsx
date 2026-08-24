@@ -8,6 +8,7 @@ import { supabase } from '@/integrations/supabase/client';
 import type { Json } from '@/integrations/supabase/types';
 import { Link } from 'react-router-dom';
 import DashboardNavbar from '@/components/dashboard/DashboardNavbar';
+import { ResourceChatSkeleton } from '@/components/resources';
 import { useUser } from '@/contexts/UserContext';
 import { aiService } from '@/services/ai';
 
@@ -116,6 +117,10 @@ const ResourceChat = () => {
       sendMessage();
     }
   };
+
+  if (isLoading) {
+    return <ResourceChatSkeleton />;
+  }
 
   return (
     <>

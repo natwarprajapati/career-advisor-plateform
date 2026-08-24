@@ -14,7 +14,8 @@ import {
 import { useUser } from "@/contexts/UserContext";
 import { calculateProfileCompletion } from "@/lib/profile-utils";
 import DashboardLayout from "@/components/dashboard/DashboardLayout";
-import { Card, Button, Badge, Spinner } from "@/ui";
+import { ProfileSkeleton } from "@/components/dashboard";
+import { Card, Button, Badge } from "@/ui";
 import { useToast } from "@/hooks/use-toast";
 import { UserProfile } from "@/core/types";
 import {
@@ -36,6 +37,12 @@ export const Profile: React.FC = () => {
   const [currentStep, setCurrentStep] = useState(1);
   const [isSaving, setIsSaving] = useState(false);
   const [stepValid, setStepValid] = useState(false);
+
+  useEffect(() => {
+    if (!isLoading && !userProfile) {
+      navigate('/?getStarted=true', { replace: true, state: { fromDashboard: true } });
+    }
+  }, [userProfile, isLoading, navigate]);
 
   // Form State
   const [formData, setFormData] = useState<Partial<UserProfile>>({
@@ -200,11 +207,7 @@ export const Profile: React.FC = () => {
   };
 
   if (isLoading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-background">
-        <Spinner size="xl" label="Loading Candidate Profile..." />
-      </div>
-    );
+    return <ProfileSkeleton />;
   }
 
   const liveCompletion = calculateProfileCompletion(formData);

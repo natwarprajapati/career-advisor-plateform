@@ -6,7 +6,8 @@ import { useNavigate } from 'react-router-dom';
 import { useUser } from '@/contexts/UserContext';
 import { supabase } from '@/integrations/supabase/client';
 import DashboardLayout from '@/components/dashboard/DashboardLayout';
-import { Button, Card, EmptyState, Spinner } from '@/ui';
+import { ResourcesListSkeleton } from '@/components/dashboard';
+import { Button, Card, EmptyState } from '@/ui';
 import { useToast } from '@/hooks/use-toast';
 
 interface Resource {
@@ -77,11 +78,7 @@ const ResourcesList = () => {
   }, {} as Record<string, Resource[]>);
 
   if (isLoading || loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-background">
-        <Spinner size="lg" label="Loading Enrolled Resources..." />
-      </div>
-    );
+    return <ResourcesListSkeleton />;
   }
 
   return (

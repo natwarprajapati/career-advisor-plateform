@@ -6,7 +6,8 @@ import { useNavigate } from 'react-router-dom';
 import { useUser } from '@/contexts/UserContext';
 import { supabase } from '@/integrations/supabase/client';
 import DashboardLayout from '@/components/dashboard/DashboardLayout';
-import { Button, Card, EmptyState, Spinner } from '@/ui';
+import { ResumesSkeleton } from '@/components/dashboard';
+import { Button, Card, EmptyState } from '@/ui';
 import { useToast } from '@/hooks/use-toast';
 
 interface Resume {
@@ -68,9 +69,12 @@ const ResumesCreated = () => {
 
   if (isLoading || loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-background">
-        <Spinner size="lg" label="Loading Resumes..." />
-      </div>
+      <>
+        <Helmet>
+          <title>Created Resumes - Dashboard</title>
+        </Helmet>
+        <ResumesSkeleton />
+      </>
     );
   }
 

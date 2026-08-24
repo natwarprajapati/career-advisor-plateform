@@ -8,3 +8,4 @@ export { default as CTASection } from './CTASection';
 export { default as Footer } from './Footer';
 export { default as GetStartedModal } from './GetStartedModal';
 export { default as WaveBackground } from './WaveBackground';
+export { default as HomeFallback } from './HomeFallback';

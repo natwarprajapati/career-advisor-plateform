@@ -15,7 +15,8 @@ import {
 import { Link, useNavigate } from 'react-router-dom';
 import { useUser } from '@/contexts/UserContext';
 import DashboardLayout from '@/components/dashboard/DashboardLayout';
-import { StatCard, Spinner, Card } from '@/ui';
+import { DashboardSkeleton } from '@/components/dashboard/DashboardSkeleton';
+import { StatCard, Card } from '@/ui';
 import { supabase } from '@/integrations/supabase/client';
 import TypewriterText from '@/components/dashboard/TypewriterText';
 
@@ -131,9 +132,12 @@ const Dashboard = () => {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-background">
-        <Spinner size="xl" label="Loading Career Dashboard..." variant="primary" />
-      </div>
+      <>
+        <Helmet>
+          <title>Dashboard - AI Career Navigator</title>
+        </Helmet>
+        <DashboardSkeleton />
+      </>
     );
   }
 

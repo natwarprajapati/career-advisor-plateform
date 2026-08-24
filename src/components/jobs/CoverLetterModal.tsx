@@ -71,6 +71,7 @@ export const CoverLetterModal = ({
   const [resumeNotes, setResumeNotes] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
+  const [isApplying, setIsApplying] = useState(false);
   const [isCopied, setIsCopied] = useState(false);
 
   // Sync state whenever dialog opens or selected job changes
@@ -159,12 +160,17 @@ export const CoverLetterModal = ({
   };
 
   const handleQuickApply = async () => {
-    if (!onApply) return;
-    // Auto save first if text exists
-    if (coverLetterText.trim()) {
-      await onSave(job.id, coverLetterText.trim(), resumeNotes.trim());
+    if (!onApply || isApplying) return;
+    setIsApplying(true);
+    try {
+      // Auto save first if text exists
+      if (coverLetterText.trim()) {
+        await onSave(job.id, coverLetterText.trim(), resumeNotes.trim());
+      }
+      await onApply(job, coverLetterText.trim());
+    } finally {
+      setIsApplying(false);
     }
-    await onApply(job, coverLetterText.trim());
   };
 
   const wordCount = coverLetterText.trim() ? coverLetterText.trim().split(/\s+/).length : 0;
@@ -358,14 +364,17 @@ export const CoverLetterModal = ({
             {onApply && (
               <Button
                 onClick={handleQuickApply}
-                disabled={isApplied}
-                className="btn-primary gap-2 w-full sm:w-auto"
+                disabled={isApplied || isApplying || isSaving}
+                isLoading={isApplying}
+                className="btn-primary gap-2 w-full sm:w-auto min-w-[140px]"
               >
                 {isApplied ? (
                   <>
                     <CheckCircle2 className="w-4 h-4 text-emerald-400" />
                     <span>Applied to {job.company}</span>
                   </>
+                ) : isApplying ? (
+                  <span>Submitting...</span>
                 ) : (
                   <>
                     <span>Apply with Cover Letter</span>

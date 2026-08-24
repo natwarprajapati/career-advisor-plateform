@@ -6,7 +6,8 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useUser } from '@/contexts/UserContext';
 import { supabase } from '@/integrations/supabase/client';
 import DashboardLayout from '@/components/dashboard/DashboardLayout';
-import { Button, Card, EmptyState, Spinner } from '@/ui';
+import { ChatHistoryListSkeleton } from '@/components/dashboard';
+import { Button, Card, EmptyState } from '@/ui';
 import { useToast } from '@/hooks/use-toast';
 
 interface ChatHistory {
@@ -67,11 +68,7 @@ const ChatHistoryList = () => {
   };
 
   if (isLoading || loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-background">
-        <Spinner size="lg" label="Loading Chat History..." />
-      </div>
-    );
+    return <ChatHistoryListSkeleton />;
   }
 
   return (

@@ -7,6 +7,7 @@ import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { Link } from 'react-router-dom';
 import DashboardNavbar from '@/components/dashboard/DashboardNavbar';
+import { SkillGapSkeleton } from '@/components/skill-gap';
 import { useUser } from '@/contexts/UserContext';
 import { aiService } from '@/services/ai';
 
@@ -131,6 +132,10 @@ const SkillGap = () => {
       default: return 'bg-green-500';
     }
   };
+
+  if (isLoading) {
+    return <SkillGapSkeleton />;
+  }
 
   return (
     <>

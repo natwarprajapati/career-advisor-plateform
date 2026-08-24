@@ -18,6 +18,21 @@ const ResourcesList = lazy(() => import("@/pages/dashboard/ResourcesList"));
 const JobsList = lazy(() => import("@/pages/dashboard/JobsList"));
 const ChatHistoryList = lazy(() => import("@/pages/dashboard/ChatHistoryList"));
 
+import { ProtectedRoute } from "@/features/auth";
+import { HomeFallback } from "@/components/home";
+import {
+  DashboardSkeleton,
+  ProfileSkeleton,
+  ResumesSkeleton,
+  ResourcesListSkeleton,
+  JobsListSkeleton,
+  ChatHistoryListSkeleton
+} from "@/components/dashboard";
+import { ResumeBuilderSkeleton } from "@/components/resume-builder";
+import { SkillGapSkeleton } from "@/components/skill-gap";
+import { ResourceChatSkeleton } from "@/components/resources";
+import { JobMatchingSkeleton } from "@/components/jobs";
+
 const PageFallback = () => (
   <div className="min-h-screen flex items-center justify-center bg-background">
     <Spinner size="lg" label="Loading..." />
@@ -28,20 +43,120 @@ export const AppRoutes: React.FC = () => {
   return (
     <Suspense fallback={<PageFallback />}>
       <Routes>
-        <Route path="/" element={<Index />} />
+        <Route
+          path="/"
+          element={
+            <Suspense fallback={<HomeFallback />}>
+              <Index />
+            </Suspense>
+          }
+        />
         <Route path="/resume-screening" element={<ResumeScreening />} />
-        <Route path="/resume-builder" element={<ResumeBuilder />} />
-        <Route path="/resources" element={<ResourceChat />} />
-        <Route path="/skill-gap" element={<SkillGap />} />
-        <Route path="/jobs" element={<JobMatching />} />
-        <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/dashboard/profile" element={<Profile />} />
+        <Route
+          path="/resume-builder"
+          element={
+            <Suspense fallback={<ResumeBuilderSkeleton />}>
+              <ResumeBuilder />
+            </Suspense>
+          }
+        />
+        <Route
+          path="/resources"
+          element={
+            <Suspense fallback={<ResourceChatSkeleton />}>
+              <ResourceChat />
+            </Suspense>
+          }
+        />
+        <Route
+          path="/skill-gap"
+          element={
+            <Suspense fallback={<SkillGapSkeleton />}>
+              <SkillGap />
+            </Suspense>
+          }
+        />
+        <Route
+          path="/jobs"
+          element={
+            <Suspense fallback={<JobMatchingSkeleton />}>
+              <JobMatching />
+            </Suspense>
+          }
+        />
+        
+        {/* Protected Routes */}
+        <Route
+          path="/dashboard"
+          element={
+            <ProtectedRoute>
+              <Suspense fallback={<DashboardSkeleton />}>
+                <Dashboard />
+              </Suspense>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/dashboard/profile"
+          element={
+            <ProtectedRoute>
+              <Suspense fallback={<ProfileSkeleton />}>
+                <Profile />
+              </Suspense>
+            </ProtectedRoute>
+          }
+        />
         <Route path="/profile" element={<Navigate to="/dashboard/profile" replace />} />
-        <Route path="/dashboard/resumes/created" element={<ResumesCreated />} />
-        <Route path="/dashboard/resumes/uploaded" element={<ResumesUploaded />} />
-        <Route path="/dashboard/resources" element={<ResourcesList />} />
-        <Route path="/dashboard/jobs" element={<JobsList />} />
-        <Route path="/dashboard/chat-history" element={<ChatHistoryList />} />
+        <Route
+          path="/dashboard/resumes/created"
+          element={
+            <ProtectedRoute>
+              <Suspense fallback={<ResumesSkeleton />}>
+                <ResumesCreated />
+              </Suspense>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/dashboard/resumes/uploaded"
+          element={
+            <ProtectedRoute>
+              <Suspense fallback={<ResumesSkeleton />}>
+                <ResumesUploaded />
+              </Suspense>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/dashboard/resources"
+          element={
+            <ProtectedRoute>
+              <Suspense fallback={<ResourcesListSkeleton />}>
+                <ResourcesList />
+              </Suspense>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/dashboard/jobs"
+          element={
+            <ProtectedRoute>
+              <Suspense fallback={<JobsListSkeleton />}>
+                <JobsList />
+              </Suspense>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/dashboard/chat-history"
+          element={
+            <ProtectedRoute>
+              <Suspense fallback={<ChatHistoryListSkeleton />}>
+                <ChatHistoryList />
+              </Suspense>
+            </ProtectedRoute>
+          }
+        />
         <Route path="*" element={<NotFound />} />
       </Routes>
     </Suspense>
