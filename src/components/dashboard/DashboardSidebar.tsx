@@ -11,7 +11,8 @@ import {
   Upload,
   PenTool,
   Sparkles,
-  LayoutGrid
+  LayoutGrid,
+  User
 } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
 import { cn } from '@/lib/utils';
@@ -151,7 +152,7 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({
           className={cn(
             "group relative flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-200",
             location.pathname === '/dashboard'
-              ? "bg-sky-500/15 text-sky-600 dark:text-sky-400 font-semibold shadow-xs"
+              ? "bg-sky-500/15 text-sky-600 dark:text-sky-400 font-semibold shadow-sm"
               : "text-muted-foreground hover:text-foreground hover:bg-muted/60"
           )}
         >
@@ -169,6 +170,35 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({
             )}
           </AnimatePresence>
           {location.pathname === '/dashboard' && !isCollapsed && (
+            <span className="w-1.5 h-1.5 rounded-full bg-sky-500 shrink-0" />
+          )}
+        </Link>
+
+        {/* My Profile */}
+        <Link
+          to="/dashboard/profile"
+          title={isCollapsed ? "My Profile & Career Setup" : undefined}
+          className={cn(
+            "group relative flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-200",
+            location.pathname === '/dashboard/profile'
+              ? "bg-sky-500/15 text-sky-600 dark:text-sky-400 font-semibold shadow-sm"
+              : "text-muted-foreground hover:text-foreground hover:bg-muted/60"
+          )}
+        >
+          <User className={cn("w-5 h-5 shrink-0 transition-transform group-hover:scale-105", location.pathname === '/dashboard/profile' && "text-sky-500")} />
+          <AnimatePresence mode="wait">
+            {!isCollapsed && (
+              <motion.span
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                className="truncate flex-1"
+              >
+                My Profile & Resume
+              </motion.span>
+            )}
+          </AnimatePresence>
+          {location.pathname === '/dashboard/profile' && !isCollapsed && (
             <span className="w-1.5 h-1.5 rounded-full bg-sky-500 shrink-0" />
           )}
         </Link>
@@ -236,7 +266,7 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({
                             className={cn(
                               "flex items-center gap-2.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all",
                               isItemActive
-                                ? "bg-sky-500/15 text-sky-600 dark:text-sky-400 font-semibold shadow-xs"
+                                ? "bg-sky-500/15 text-sky-600 dark:text-sky-400 font-semibold shadow-sm"
                                 : "text-muted-foreground hover:text-foreground hover:bg-muted/60"
                             )}
                           >

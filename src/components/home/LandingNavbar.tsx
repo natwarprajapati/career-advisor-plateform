@@ -1,31 +1,32 @@
-import { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
-import { Menu, X, Sparkles } from 'lucide-react';
-import { Link, useNavigate } from 'react-router-dom';
-import GetStartedModal from './GetStartedModal';
-import { useUser } from '@/contexts/UserContext';
+import { useState, useEffect } from "react";
+import { motion } from "framer-motion";
+import { Menu, X, Sparkles } from "lucide-react";
+import { Link, useNavigate } from "react-router-dom";
+import GetStartedModal from "./GetStartedModal";
+import { useUser } from "@/contexts/UserContext";
+import { Button } from "@/ui";
 
 const navLinks = [
-  { name: 'Home', href: '#hero' },
-  { name: 'Features', href: '#features' },
-  { name: 'Journey', href: '#journey' },
-  { name: 'About', href: '#about' },
+  { name: "Home", href: "#hero" },
+  { name: "Features", href: "#features" },
+  { name: "Journey", href: "#journey" },
+  { name: "About", href: "#about" },
 ];
 
 const LandingNavbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [activeSection, setActiveSection] = useState('hero');
+  const [activeSection, setActiveSection] = useState("hero");
   const { userProfile } = useUser();
   const navigate = useNavigate();
 
   useEffect(() => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 20);
-      
+
       // Update active section based on scroll position
-      const sections = ['hero', 'features', 'journey', 'about'];
+      const sections = ["hero", "features", "journey", "about"];
       for (const section of sections.reverse()) {
         const element = document.getElementById(section);
         if (element) {
@@ -37,22 +38,22 @@ const LandingNavbar = () => {
         }
       }
     };
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
   const scrollToSection = (href: string) => {
-    const id = href.replace('#', '');
+    const id = href.replace("#", "");
     const element = document.getElementById(id);
     if (element) {
-      element.scrollIntoView({ behavior: 'smooth' });
+      element.scrollIntoView({ behavior: "smooth" });
     }
     setIsMobileMenuOpen(false);
   };
 
   const handleGetStarted = () => {
     if (userProfile) {
-      navigate('/dashboard');
+      navigate("/dashboard");
     } else {
       setIsModalOpen(true);
     }
@@ -63,56 +64,73 @@ const LandingNavbar = () => {
       <motion.nav
         initial={{ y: -100 }}
         animate={{ y: 0 }}
-        transition={{ duration: 0.6, ease: 'easeOut' }}
+        transition={{ duration: 0.6, ease: "easeOut" }}
         className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-          isScrolled ? 'glass-navbar' : 'bg-transparent'
+          isScrolled ? "glass-navbar" : "bg-transparent"
         }`}
       >
         <div className="container-custom">
           <div className="flex items-center justify-between h-20">
             {/* Logo */}
             <Link to="/" className="flex items-center gap-2 group">
-              <div className="w-10 h-10 rounded-xl gradient-bg flex items-center justify-center">
-                <Sparkles className="w-5 h-5 text-primary-foreground" />
+              <div className="w-10 h-10 rounded-xl gradient-bg flex items-center justify-center shadow-md">
+                <Sparkles className="w-5 h-5 text-white" />
               </div>
-              <span className="font-bold text-xl text-primary">
-                AI Career<span className="text-secondary">Nav</span>
+              <span className="font-extrabold text-xl text-foreground">
+                AI Career<span className="text-sky-500">Nav</span>
               </span>
             </Link>
 
             {/* Desktop Navigation */}
             <div className="hidden md:flex items-center gap-6">
               {navLinks.map((link) => (
-                <button
+                <Button
                   key={link.name}
                   onClick={() => scrollToSection(link.href)}
+                  variant="ghost"
                   className={`relative text-foreground/80 font-medium hover:text-primary transition-colors duration-300 group ${
-                    activeSection === link.href.replace('#', '') ? 'text-primary' : ''
+                    activeSection === link.href.replace("#", "")
+                      ? "text-primary"
+                      : ""
                   }`}
                 >
                   {link.name}
-                  <span className={`absolute -bottom-1 left-0 h-0.5 bg-secondary transition-all duration-300 ${
-                    activeSection === link.href.replace('#', '') ? 'w-full' : 'w-0 group-hover:w-full'
-                  }`} />
-                </button>
+                  <span
+                    className={`absolute -bottom-1 left-0 h-0.5 bg-secondary transition-all duration-300 ${
+                      activeSection === link.href.replace("#", "")
+                        ? "w-full"
+                        : "w-0 group-hover:w-full"
+                    }`}
+                  />
+                </Button>
               ))}
             </div>
 
             {/* CTA Button */}
             <div className="hidden md:block">
-              <button onClick={handleGetStarted} className="btn-primary inline-flex items-center gap-2">
+              <Button
+                onClick={handleGetStarted}
+                variant="primary"
+                className="btn-primary inline-flex items-center gap-2"
+              >
                 <Sparkles className="w-4 h-4" />
                 Get Started
-              </button>
+              </Button>
             </div>
 
             {/* Mobile Menu Button */}
-            <button
+            <Button
               className="md:hidden p-2 text-primary"
+              variant="ghost"
+              size="icon"
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
             >
-              {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-            </button>
+              {isMobileMenuOpen ? (
+                <X className="w-6 h-6" />
+              ) : (
+                <Menu className="w-6 h-6" />
+              )}
+            </Button>
           </div>
         </div>
 
@@ -126,25 +144,35 @@ const LandingNavbar = () => {
           >
             <div className="container-custom py-6 flex flex-col gap-4">
               {navLinks.map((link) => (
-                <button
+                <Button
                   key={link.name}
                   onClick={() => scrollToSection(link.href)}
+                  variant="ghost"
                   className={`font-medium py-2 transition-colors text-left ${
-                    activeSection === link.href.replace('#', '') ? 'text-primary' : 'text-foreground/80 hover:text-primary'
+                    activeSection === link.href.replace("#", "")
+                      ? "text-primary"
+                      : "text-foreground/80 hover:text-primary"
                   }`}
                 >
                   {link.name}
-                </button>
+                </Button>
               ))}
-              <button onClick={handleGetStarted} className="btn-primary text-center mt-2">
+              <Button
+                onClick={handleGetStarted}
+                variant="primary"
+                className="btn-primary text-center mt-2"
+              >
                 Get Started
-              </button>
+              </Button>
             </div>
           </motion.div>
         )}
       </motion.nav>
-      
-      <GetStartedModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
+
+      <GetStartedModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+      />
     </>
   );
 };

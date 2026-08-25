@@ -6,7 +6,8 @@ import { useNavigate } from 'react-router-dom';
 import { useUser } from '@/contexts/UserContext';
 import { supabase } from '@/integrations/supabase/client';
 import DashboardLayout from '@/components/dashboard/DashboardLayout';
-import { Button, Card, EmptyState, Spinner } from '@/design-system';
+import { ResourcesListSkeleton } from '@/components/dashboard';
+import { Button, Card, EmptyState } from '@/ui';
 import { useToast } from '@/hooks/use-toast';
 
 interface Resource {
@@ -33,7 +34,7 @@ const ResourcesList = () => {
 
   const fetchResources = useCallback(async () => {
     if (!userProfile) return;
-    
+
     try {
       const { data, error } = await supabase
         .from('resources')
@@ -43,8 +44,8 @@ const ResourcesList = () => {
 
       if (error) throw error;
       setResources(data || []);
-    } catch (error) {
-      console.error('Error fetching resources:', error);
+    } catch {
+      // Silent error fallback
     } finally {
       setLoading(false);
     }
@@ -77,11 +78,7 @@ const ResourcesList = () => {
   }, {} as Record<string, Resource[]>);
 
   if (isLoading || loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-background">
-        <Spinner size="lg" label="Loading Enrolled Resources..." />
-      </div>
-    );
+    return <ResourcesListSkeleton />;
   }
 
   return (
@@ -96,7 +93,7 @@ const ResourcesList = () => {
             <h1 className="text-2xl md:text-3xl font-extrabold text-foreground tracking-tight">Learning Resources</h1>
             <p className="text-muted-foreground text-sm">Curated courses and learning paths you have saved</p>
           </div>
-          <Button variant="glow" onClick={() => navigate('/resources')} leftIcon={<BookOpen className="w-4 h-4" />}>
+          <Button variant="primary" onClick={() => navigate('/resources')} leftIcon={<BookOpen className="w-4 h-4" />}>
             Explore More
           </Button>
         </div>

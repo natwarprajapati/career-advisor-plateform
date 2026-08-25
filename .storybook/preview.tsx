@@ -1,5 +1,6 @@
 import type { Preview } from "@storybook/react";
 import React from "react";
+import { MemoryRouter } from "react-router-dom";
 import "../src/styles/index.css";
 
 const preview: Preview = {
@@ -34,11 +35,13 @@ const preview: Preview = {
       const isDark = context.globals.backgrounds?.value !== "#f8fafc";
 
       return (
-        <div className={isDark ? "dark" : ""}>
-          <div className="bg-background text-foreground rounded-2xl min-w-[320px] transition-colors font-sans">
-            <Story />
+        <MemoryRouter>
+          <div className={isDark ? "dark" : ""}>
+            <div className="bg-background text-foreground rounded-2xl min-w-[320px] transition-colors font-sans p-4">
+              <Story />
+            </div>
           </div>
-        </div>
+        </MemoryRouter>
       );
     },
   ],

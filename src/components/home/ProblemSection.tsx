@@ -62,14 +62,14 @@ const ProblemSection = () => {
           transition={{ duration: 0.6 }}
           className="text-center max-w-3xl mx-auto mb-16"
         >
-          <span className="inline-block px-4 py-1.5 rounded-full bg-secondary/10 text-secondary text-sm font-medium mb-4">
+          <span className="inline-block px-4 py-1.5 rounded-full bg-sky-500/10 text-sky-700 dark:text-sky-300 border border-sky-500/30 text-xs font-bold uppercase tracking-wider mb-4">
             The Challenge
           </span>
-          <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-primary mb-4">
+          <h2 className="text-3xl md:text-4xl lg:text-5xl font-extrabold text-foreground mb-4 tracking-tight">
             Why Career Navigation is{' '}
             <span className="gradient-text">Broken</span>
           </h2>
-          <p className="text-lg text-muted-foreground">
+          <p className="text-base md:text-lg text-muted-foreground font-medium">
             The modern job market presents unique challenges that traditional approaches can't solve. 
             AI changes everything.
           </p>
@@ -84,15 +84,15 @@ const ProblemSection = () => {
               animate={isInView ? { opacity: 1, y: 0 } : {}}
               transition={{ duration: 0.6, delay: index * 0.1 }}
               whileHover={{ y: -6, scale: 1.02 }}
-              className="glass-card p-6 group cursor-default"
+              className="glass-card p-6 group cursor-default border border-border/80"
             >
               {/* Icon with gradient background */}
-              <div className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${problem.color} flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300`}>
-                <problem.icon className="w-7 h-7 text-primary" />
+              <div className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${problem.color} flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300 shadow-sm`}>
+                <problem.icon className="w-7 h-7 text-foreground" />
               </div>
 
-              <h3 className="text-xl font-semibold text-primary mb-2">{problem.title}</h3>
-              <p className="text-muted-foreground leading-relaxed">{problem.description}</p>
+              <h3 className="text-lg font-bold text-foreground mb-2">{problem.title}</h3>
+              <p className="text-sm text-muted-foreground leading-relaxed font-medium">{problem.description}</p>
             </motion.div>
           ))}
         </div>

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import DashboardNavbar from '@/components/DashboardNavbar';
+import DashboardNavbar from '@/components/dashboard/DashboardNavbar';
 import DashboardSidebar from './DashboardSidebar';
 import { cn } from '@/lib/utils';
 

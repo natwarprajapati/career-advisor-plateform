@@ -70,14 +70,14 @@ const FeaturesSection = () => {
           transition={{ duration: 0.6 }}
           className="text-center max-w-3xl mx-auto mb-16"
         >
-          <span className="inline-block px-4 py-1.5 rounded-full bg-secondary/10 text-secondary text-sm font-medium mb-4">
+          <span className="inline-block px-4 py-1.5 rounded-full bg-sky-500/10 text-sky-700 dark:text-sky-300 border border-sky-500/30 text-xs font-bold uppercase tracking-wider mb-4">
             Core Features
           </span>
-          <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-primary mb-4">
+          <h2 className="text-3xl md:text-4xl lg:text-5xl font-extrabold text-foreground mb-4 tracking-tight">
             AI-Powered Career{' '}
             <span className="gradient-text">Intelligence</span>
           </h2>
-          <p className="text-lg text-muted-foreground">
+          <p className="text-base md:text-lg text-muted-foreground font-medium">
             Four powerful AI tools working together to transform your career journey from uncertain to unstoppable.
           </p>
         </motion.div>
@@ -92,37 +92,39 @@ const FeaturesSection = () => {
               transition={{ duration: 0.6, delay: index * 0.15 }}
               className="group"
             >
-              <div className="glass-card-hover h-full p-8">
-                {/* Header */}
-                <div className="flex items-start gap-4 mb-6">
-                  <div className={`w-16 h-16 rounded-2xl bg-gradient-to-br ${feature.color} flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform duration-300`}>
-                    <feature.icon className="w-8 h-8 text-primary-foreground" />
+              <div className="glass-card-hover h-full p-8 border border-border/80 flex flex-col justify-between">
+                <div>
+                  {/* Header */}
+                  <div className="flex items-start gap-4 mb-6">
+                    <div className={`w-16 h-16 rounded-2xl bg-gradient-to-br ${feature.color} flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform duration-300 shadow-md`}>
+                      <feature.icon className="w-8 h-8 text-white" />
+                    </div>
+                    <div className="flex-1">
+                      <h3 className="text-xl font-bold text-foreground mb-2">{feature.title}</h3>
+                      <p className="text-sm text-muted-foreground leading-relaxed font-medium">{feature.description}</p>
+                    </div>
                   </div>
-                  <div className="flex-1">
-                    <h3 className="text-xl font-bold text-primary mb-2">{feature.title}</h3>
-                    <p className="text-muted-foreground">{feature.description}</p>
-                  </div>
-                </div>
 
-                {/* Highlights */}
-                <div className={`${feature.bgColor} rounded-xl p-5 mb-6`}>
-                  <div className="grid grid-cols-2 gap-3">
-                    {feature.highlights.map((highlight, hIndex) => (
-                      <div key={hIndex} className="flex items-center gap-2">
-                        <CheckCircle2 className="w-4 h-4 text-secondary flex-shrink-0" />
-                        <span className="text-sm font-medium text-foreground">{highlight}</span>
-                      </div>
-                    ))}
+                  {/* Highlights */}
+                  <div className={`${feature.bgColor} rounded-xl p-5 mb-6 border border-border/50`}>
+                    <div className="grid grid-cols-2 gap-3">
+                      {feature.highlights.map((highlight, hIndex) => (
+                        <div key={hIndex} className="flex items-center gap-2">
+                          <CheckCircle2 className="w-4 h-4 text-sky-500 flex-shrink-0" />
+                          <span className="text-xs sm:text-sm font-semibold text-foreground">{highlight}</span>
+                        </div>
+                      ))}
+                    </div>
                   </div>
                 </div>
 
                 {/* CTA */}
                 <Link
                   to={feature.link}
-                  className="inline-flex items-center gap-2 text-primary font-semibold group-hover:text-secondary transition-colors"
+                  className="inline-flex items-center gap-2 text-sky-600 dark:text-sky-400 font-bold hover:text-sky-500 hover:gap-3 transition-all pt-2"
                 >
                   Try this feature
-                  <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                  <ArrowRight className="w-4 h-4" />
                 </Link>
               </div>
             </motion.div>

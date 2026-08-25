@@ -6,7 +6,8 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useUser } from '@/contexts/UserContext';
 import { supabase } from '@/integrations/supabase/client';
 import DashboardLayout from '@/components/dashboard/DashboardLayout';
-import { Button, Card, EmptyState, Spinner } from '@/design-system';
+import { ChatHistoryListSkeleton } from '@/components/dashboard';
+import { Button, Card, EmptyState } from '@/ui';
 import { useToast } from '@/hooks/use-toast';
 
 interface ChatHistory {
@@ -32,7 +33,7 @@ const ChatHistoryList = () => {
 
   const fetchChats = useCallback(async () => {
     if (!userProfile) return;
-    
+
     try {
       const { data, error } = await supabase
         .from('chat_history')
@@ -42,8 +43,8 @@ const ChatHistoryList = () => {
 
       if (error) throw error;
       setChats(data || []);
-    } catch (error) {
-      console.error('Error fetching chats:', error);
+    } catch {
+      // Silent error fallback
     } finally {
       setLoading(false);
     }
@@ -67,11 +68,7 @@ const ChatHistoryList = () => {
   };
 
   if (isLoading || loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-background">
-        <Spinner size="lg" label="Loading Chat History..." />
-      </div>
-    );
+    return <ChatHistoryListSkeleton />;
   }
 
   return (
@@ -86,7 +83,7 @@ const ChatHistoryList = () => {
             <h1 className="text-2xl md:text-3xl font-extrabold text-foreground tracking-tight">Chat History</h1>
             <p className="text-muted-foreground text-sm">Your recorded AI career mentoring transcripts</p>
           </div>
-          <Button variant="glow" onClick={() => navigate('/resources')} leftIcon={<MessageSquare className="w-4 h-4" />}>
+          <Button variant="primary" onClick={() => navigate('/resources')} leftIcon={<MessageSquare className="w-4 h-4" />}>
             New Consultation
           </Button>
         </div>
