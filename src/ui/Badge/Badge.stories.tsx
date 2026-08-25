@@ -64,7 +64,7 @@ export const AllVariants: Story = {
       <Badge variant="glass" icon={<Flame className="w-3 h-3 text-amber-400" />}>Trending Role</Badge>
       <Badge variant="glow">AI Match 95%</Badge>
       <Badge variant="outline">Remote Only</Badge>
-      <Badge variant="pill">Full Time</Badge>
+      <Badge variant="secondary">Full Time</Badge>
     </div>
   ),
 };

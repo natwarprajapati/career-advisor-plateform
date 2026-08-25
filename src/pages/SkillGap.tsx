@@ -69,8 +69,16 @@ const SkillGap = () => {
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [analysis, setAnalysis] = useState<Analysis | null>(null);
   const { toast } = useToast();
-  const { userProfile } = useUser();
+  const { userProfile, isLoading } = useUser();
 
+  useEffect(() => {
+    if (userProfile?.skills && userProfile.skills.length > 0) {
+      setSkills((prev) => (prev.length === 0 ? userProfile.skills! : prev));
+    }
+    if (userProfile?.current_role) {
+      setTargetRole((prev) => (!prev ? userProfile.current_role! : prev));
+    }
+  }, [userProfile]);
 
   const addSkill = () => {
     if (skillInput.trim() && !skills.includes(skillInput.trim())) {
